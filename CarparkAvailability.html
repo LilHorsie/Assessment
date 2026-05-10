@@ -2,103 +2,44 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carpark Availability</title>
-    <link rel="stylesheet" href="Assessment.css">
+    <link rel="stylesheet" href="CarparkAvailability.css">
 </head>
 <body>
+    
+    <div class="container">
+        <div class="nav-bar">
+            <a href="Main_page.html" class="btn-home">Home</a>
+        </div>
 
-<h1>Carpark Lot Availability</h1>
+        <h1>Carpark Lot Availability</h1>
 
-<input id="searchInput" placeholder="Search carpark or address">
-<button onclick="search()">Search</button>
-<button onclick="clearSearch()">Clear</button>
+        <div class="search-container">
+            <input id="searchInput" type="text" placeholder="Search carpark or address...">
+            <button onclick="search()" class="btn-search">Search</button>
+            <button onclick="clearSearch()" class="btn-clear">Clear</button>
+        </div>
 
-<p id="noResults">No results found</p>
+        <p id="noResults" class="hidden">No results found</p>
 
-<table>
-    <thead>
-        <tr>
-            <th>Carpark Number</th>
-            <th>Address</th>
-            <th>Total Lots</th>
-            <th>Available Lots</th>
-        </tr>
-    </thead>
-    <tbody id="tableBody"></tbody>
-</table>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Carpark No.</th>
+                        <th>Address</th>
+                        <th>Total Lots</th>
+                        <th>Available Lots</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Data injected here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-<script>
-let allData = [];
-
-function makeSearchable(text) {
-    return text
-        .toLowerCase()
-        .replace(/[^a-z0-9]/g, " ")
-        .replace(/\s+/g, " ")
-        .trim();
-}
-
-Promise.all([
-    fetch("HDBCarparkInformation.json").then(r => r.json()),
-    fetch("https://api.data.gov.sg/v1/transport/carpark-availability").then(r => r.json())
-]).then(data => {
-    let info = data[0];
-    let availability = data[1].items[0].carpark_data;
-
-    info.forEach(c => {
-        let number = c.car_park_no.trim();
-        let address = c.address;
-        let match = availability.find(a => a.carpark_number.trim() === number);
-        let carLot = match ? match.carpark_info.find(x => x.lot_type === "C") : null;
-
-        allData.push({
-            number: number,
-            address: address,
-            total: carLot ? carLot.total_lots : "N/A",
-            available: carLot ? carLot.lots_available : "N/A",
-            searchText: makeSearchable(number + " " + address)
-        });
-    });
-
-    showTable(allData);
-});
-
-function showTable(data) {
-    let body = document.getElementById("tableBody");
-    document.getElementById("noResults").style.display = "none";
-
-    if (data.length === 0) {
-        body.innerHTML = "";
-        document.getElementById("noResults").style.display = "block";
-        return;
-    }
-
-    let htmlContent = "";
-    data.forEach(i => {
-        htmlContent += `
-        <tr>
-            <td>${i.number}</td>
-            <td>${i.address}</td>
-            <td>${i.total}</td>
-            <td>${i.available}</td>
-        </tr>`;
-    });
-
-    body.innerHTML = htmlContent;
-}
-
-function search() {
-    let input = makeSearchable(document.getElementById("searchInput").value);
-    let words = input.split(" ");
-    let results = allData.filter(item => words.every(w => item.searchText.includes(w)));
-    showTable(results);
-}
-
-function clearSearch() {
-    document.getElementById("searchInput").value = "";
-    showTable(allData);
-}
-</script>
-
+    <script src="CarparkAvailability.js"></script>
 </body>
 </html>

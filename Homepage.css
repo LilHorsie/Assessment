@@ -8,21 +8,48 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     background-color: white; 
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     padding: 40px 20px;
 }
 
+.container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 40px;
+}
+
+.left-content {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+}
+
+.right-sidebar {
+    flex: 1;
+    background-color: aliceblue;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(2, 2, 63, 0.1);
+}
+
+.right-sidebar h2 {
+    color: rgba(2, 2, 63, 0.589);
+    margin-bottom: 15px;
+}
+
 h1 {
-    color: darkblue; 
+    color: rgba(2, 2, 63, 0.589); 
     font-size: 2.5rem;
     margin-bottom: 10px;
     text-align: center;
 }
 
-p {
+.left-content p {
     color: lightslategray; 
     font-size: 1.1rem;
     margin-bottom: 30px;
@@ -51,14 +78,13 @@ li {
 
 nav a {
     text-decoration: none;
-
     color: darkblue; 
     background-color: aliceblue;
-    padding: 12px 20px;
+    padding: 12px 45px; 
     display: block;
     text-align: center;
-    border-radius: 8px;
-    font-weight: 600;
+    border-radius: 100px;
+    font-weight: 650;
     transition: all 0.3s ease;
 }
 
@@ -69,6 +95,35 @@ nav a:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+main h2 {
+    margin-top: 30px;
+    color: #333;
+}
+
+footer {
+
+    padding: 200px;
+    width: 100%;
+    text-align: center;        
+
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    justify-content: center;
+}
+
+
+@media (max-width: 850px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .left-content, .right-sidebar {
+        width: 100%;
+        max-width: 600px;
+    }
+}
 
 @media (max-width: 480px) {
     ul {
