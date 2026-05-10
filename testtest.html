@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Live Carpark Availability</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        input {
+            padding: 6px;
+            width: 250px;
+        }
+
+        button {
+            padding: 6px 10px;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        /* Color coding */
+        .high { background-color: #d4edda; }   /* Green */
+        .medium { background-color: #fff3cd; } /* Yellow */
+        .low { background-color: #f8d7da; }    /* Red */
+
+        /* Mobile friendly */
+        @media (max-width: 600px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+            th {
+                display: none;
+            }
+            td {
+                padding: 10px;
+                border-bottom: 1px solid #ccc;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Carpark Availability</h1>
+
+<hr>
+
+<h3>Controls</h3>
+
+<input type="text" id="searchInput" placeholder="Search by Carpark Name or Address">
+<button id="fetchBtn">Fetch Data</button>
+<p id="status"></p>
+
+<p><i>Auto-refreshes every 60 seconds.</i></p>
+
+<hr>
+
+<h3>Current Data</h3>
+<div id="results">
+    <p>No data loaded yet.</p>
+</div>
+
+<script>
+const fetchBtn = document.getElementById('fetchBtn');
+const resultsDiv = document.getElementById('results');
+const statusText = document.getElementById('status');
+const searchInput = document.getElementById('searchInput');
+
+async function fetchCarparkData() {
+    try {
+        statusText.innerText = "Fetching data...";
+
+        // Load carpark addresses from HDB carpark information API
+        const carparkInfoResponse = await fetch('https://data.gov.sg/api/action/datastore_search?resource_id=139a3035-e624-4f56-b63f-89ae8d8b1b52&limit=1000');
+        const carparkInfoJson = await carparkInfoResponse.json();
+        const carparkInfoData = carparkInfoJson.result.records;
+        
+        // Create a lookup map for addresses
+        const addressMap = {};
+        carparkInfoData.forEach(cp => {
+            addressMap[cp.car_park_no] = cp.address;
+        });
+
+        const response = await fetch('https://api.data.gov.sg/v1/transport/carpark-availability');
+        if (!response.ok) {
+            throw new Error("Network error");
+        }
+
+        const data = await response.json();
+        const latestUpdate = data.items[0];
+        let carparks = latestUpdate.carpark_data;
+
+        // SEARCH FILTER
+        const searchValue = searchInput.value.toUpperCase();
+        if (searchValue !== "") {
+            carparks = carparks.filter(cp =>
+                cp.carpark_number.toUpperCase().includes(searchValue) ||
+                (addressMap[cp.carpark_number] || "").toUpperCase().includes(searchValue)
+            );
+        }
+
+        let htmlOutput = `<p><b>Data Timestamp:</b> ${latestUpdate.timestamp}</p>`;
+        htmlOutput += `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Address</th>
+                        <th>Lot Type</th>
+                        <th>Available</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        carparks.slice(0, 20).forEach(cp => {
+            const info = cp.carpark_info[0];
+            const available = parseInt(info.lots_available);
+
+            // COLOR CODING LOGIC
+            let rowClass = "high";
+            if (available < 10) rowClass = "low";
+            else if (available < 30) rowClass = "medium";
+
+            htmlOutput += `
+                <tr class="${rowClass}">
+                    <td>${addressMap[cp.carpark_number] || cp.carpark_number}</td>
+                    <td>${info.lot_type}</td>
+                    <td>${info.lots_available}</td>
+                    <td>${info.total_lots}</td>
+                </tr>
+            `;
+        });
+
+        htmlOutput += `
+                </tbody>
+            </table>
+            <p><i>Showing up to 20 results</i></p>
+        `;
+
+        resultsDiv.innerHTML = htmlOutput;
+        statusText.innerText = "Data loaded successfully ✅";
+
+    } catch (error) {
+        statusText.innerText = "Error loading data ❌";
+        resultsDiv.innerHTML = `<p style="color:red;">${error.message}</p>`;
+    }
+}
+
+fetchBtn.addEventListener('click', fetchCarparkData);
+
+
+setInterval(fetchCarparkData, 60000);
+</script>
+
+</body>
+</html>
