@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Shopping Mall Carpark Pricing</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            font-size: 0.9em;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        input {
+            padding: 5px;
+            font-size: 1em;
+        }
+        button {
+            padding: 5px 10px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        .error-message {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Singapore Shopping Mall Carpark Pricing</h1>
+
+<input id="searchInput" placeholder="Search mall or region...">
+<button onclick="search()">Search</button>
+<button onclick="clearSearch()">Clear</button>
+
+<p id="noResults" style="display:none; color: red;">No results found</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Mall Name</th>
+            <th>Region</th>
+            <th>Total Lots</th>
+            <th>Weekdays (Before 5pm)</th>
+            <th>Weekdays (After 5pm)</th>
+            <th>Saturdays</th>
+            <th>Sundays & PH</th>
+        </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+</table>
+
+<script>
+let allData = [];
+
+function makeSearchable(text) {
+    return text
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+function fetchAndInitializeData() {
+    // Fetch the JSON file from the same directory
+    fetch('compiled_all_singapore_shopping_malls_carpark.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(shoppingMallsData => {
+            // Process the fetched JSON data
+            shoppingMallsData.forEach(mall => {
+                let totalLots = mall.total_carpark_lots !== null ? mall.total_carpark_lots : "N/A";
+
+                allData.push({
+                    name: mall.mall_name,
+                    region: mall.region,
+                    total: totalLots,
+                    wk_before_5: mall.pricing.weekdays_before_5pm,
+                    wk_after_5: mall.pricing.weekdays_after_5pm,
+                    sat: mall.pricing.saturdays,
+                    sun_ph: mall.pricing.sundays_and_ph,
+                    searchText: makeSearchable(`${mall.mall_name} ${mall.region}`)
+                });
+            });
+
+            // Display the table once data is processed
+            showTable(allData);
+        })
+        .catch(error => {
+            console.error('Error fetching the JSON file:', error);
+            let body = document.getElementById("tableBody");
+            body.innerHTML = `<tr><td colspan="7" class="error-message">Error loading data. Please ensure 'all_singapore_shopping_malls_carpark.json' is in the same directory and you are using a local web server.</td></tr>`;
+        });
+}
+
+function showTable(data) {
+    let body = document.getElementById("tableBody");
+    let noResultsEl = document.getElementById("noResults");
+    
+    noResultsEl.style.display = "none";
+
+    if (data.length === 0) {
+        body.innerHTML = "";
+        noResultsEl.style.display = "block";
+        return;
+    }
+
+    let htmlContent = "";
+    data.forEach(i => {
+        htmlContent += `
+        <tr>
+            <td><strong>${i.name}</strong></td>
+            <td>${i.region}</td>
+            <td>${i.total}</td>
+            <td>${i.wk_before_5}</td>
+            <td>${i.wk_after_5}</td>
+            <td>${i.sat}</td>
+            <td>${i.sun_ph}</td>
+        </tr>`;
+    });
+
+    body.innerHTML = htmlContent;
+}
+
+function search() {
+    let input = makeSearchable(document.getElementById("searchInput").value);
+    let words = input.split(" ");
+    let results = allData.filter(item => words.every(w => item.searchText.includes(w)));
+    showTable(results);
+}
+
+function clearSearch() {
+    document.getElementById("searchInput").value = "";
+    showTable(allData);
+}
+
+// Fetch data and initialize the table on window load
+window.onload = fetchAndInitializeData;
+</script>
+
+</body>
+</html>
