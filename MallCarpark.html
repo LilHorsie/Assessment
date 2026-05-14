@@ -74,7 +74,7 @@ function makeSearchable(text) {
 }
 
 function fetchAndInitializeData() {
-    // Fetch the JSON file from the same directory
+  
     fetch('compiled_all_singapore_shopping_malls_carpark.json')
         .then(response => {
             if (!response.ok) {
@@ -83,7 +83,7 @@ function fetchAndInitializeData() {
             return response.json();
         })
         .then(shoppingMallsData => {
-            // Process the fetched JSON data
+         
             shoppingMallsData.forEach(mall => {
                 let totalLots = mall.total_carpark_lots !== null ? mall.total_carpark_lots : "N/A";
 
@@ -98,8 +98,6 @@ function fetchAndInitializeData() {
                     searchText: makeSearchable(`${mall.mall_name} ${mall.region}`)
                 });
             });
-
-            // Display the table once data is processed
             showTable(allData);
         })
         .catch(error => {
@@ -149,8 +147,6 @@ function clearSearch() {
     document.getElementById("searchInput").value = "";
     showTable(allData);
 }
-
-// Fetch data and initialize the table on window load
 window.onload = fetchAndInitializeData;
 </script>
 
