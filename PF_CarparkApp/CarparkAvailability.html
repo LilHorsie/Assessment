@@ -3,27 +3,30 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carpark Availability</title>
-    <link rel="stylesheet" href="CarparkAvailability.css">
+    <title>Carpark Availability - Singapore</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     
-    <div class="container">
-        <div class="nav-bar">
+    <header class="nav-bar">
+        <nav>
             <a href="index.html" class="btn-home">Home</a>
-        </div>
+        </nav>
+    </header>
 
+    <main class="container">
         <h1>Carpark Lot Availability</h1>
 
-        <div class="search-container">
-            <input id="searchInput" type="text" placeholder="Search carpark or address...">
+        <section class="search-container">
+            <input id="searchInput" type="text" placeholder="Search carpark or address..." aria-label="Search for a carpark">
             <button onclick="search()" class="btn-search">Search</button>
             <button onclick="clearSearch()" class="btn-clear">Clear</button>
-        </div>
+        </section>
 
+        <p id="errorMessage" class="hidden error-text"></p>
         <p id="noResults" class="hidden">No results found</p>
 
-        <div class="table-wrapper">
+        <section class="table-wrapper">
             <table>
                 <thead>
                     <tr>
@@ -34,12 +37,11 @@
                     </tr>
                 </thead>
                 <tbody id="tableBody">
-
-                </tbody>
+                    </tbody>
             </table>
-        </div>
-    </div>
+        </section>
+    </main>
 
-    <script src="CarparkAvailability.js"></script>
+    <script src="js/carpark-availability.js"></script>
 </body>
 </html>

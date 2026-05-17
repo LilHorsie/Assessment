@@ -4,26 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Singapore Mall Carpark Rates</title>
-    <link rel="stylesheet" href="CarparkAvailability.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-    <div class="container">
-        <div class="nav-bar">
+    <header class="nav-bar">
+        <nav>
             <a href="index.html" class="btn-home">Home</a>
-        </div>
+        </nav>
+    </header>
 
+    <main class="container">
         <h1>Singapore Mall Carpark Pricing</h1>
         
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search for a mall (e.g., VivoCity)...">
+        <section class="search-container">
+            <input type="text" id="searchInput" placeholder="Search for a mall (e.g., VivoCity)..." aria-label="Search Mall">
             <button class="btn-search" id="searchBtn">Search</button>
             <button class="btn-clear" id="clearBtn">Clear</button>
-        </div>
+        </section>
 
+        <p id="errorMessage" class="hidden error-text"></p>
         <p id="noResults" class="hidden">No malls found matching your search.</p>
 
-        <div class="table-wrapper">
+        <section class="table-wrapper">
             <table id="carparkTable">
                 <thead>
                     <tr>
@@ -38,9 +41,9 @@
                 <tbody id="tableBody">
                     </tbody>
             </table>
-        </div>
-    </div>
+        </section>
+    </main>
 
-    <script src="CarparkMallPrices.js"></script>
+    <script src="js/carpark-mall-prices.js"></script>
 </body>
 </html>

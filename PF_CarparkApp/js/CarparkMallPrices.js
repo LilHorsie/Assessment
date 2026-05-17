@@ -1,3 +1,4 @@
+"use strict";
 
 let mallData = [];
 
@@ -7,7 +8,12 @@ const noResultsMessage = document.getElementById('noResults');
 const searchInput = document.getElementById('searchInput');
 const searchBtn = document.getElementById('searchBtn');
 const clearBtn = document.getElementById('clearBtn');
+const errorMessage = document.getElementById('errorMessage');
 
+/**
+ * Renders the mall data into the HTML table.
+ * @param {Array} dataToRender - The array of mall objects to display.
+ */
 function renderTable(dataToRender) {
     tableBody.innerHTML = ''; 
 
@@ -35,6 +41,9 @@ function renderTable(dataToRender) {
     });
 }
 
+/**
+ * Filters the table based on the user's search input.
+ */
 function handleSearch() {
     const query = searchInput.value.toLowerCase().trim();
     const filteredData = mallData.filter(mall => 
@@ -56,29 +65,26 @@ clearBtn.addEventListener('click', () => {
     renderTable(mallData);
 });
 
+/**
+ * Fetches the mall carpark pricing data from the local JSON file.
+ */
 async function loadMallData() {
     try {
-        const response = await fetch('all_singapore_shopping_malls_carpark.json');
+        const response = await fetch('data/all_singapore_shopping_malls_carpark.json');
 
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
         mallData = await response.json();
-
         renderTable(mallData);
 
     } catch (error) {
         console.error("Failed to fetch mall data:", error);
-
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="6" style="text-align: center; color: #e74c3c; font-weight: bold;">
-                    Error loading data. Check your console.<br>
-                    (Note: You must use a local web server to read JSON files, simply double-clicking the HTML file will cause a CORS error).
-                </td>
-            </tr>
-        `;
+        // Provide clear textual feedback for errors to the user
+        errorMessage.textContent = "Failed to load mall pricing data. Please try again.";
+        errorMessage.classList.remove('hidden');
+        carparkTable.classList.add('hidden');
     }
 }
 
-loadMallData();
+window.onload = loadMallData;
