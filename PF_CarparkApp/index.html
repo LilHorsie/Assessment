@@ -1,41 +1,70 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>
-            Carpark Lots and Pricing
-        </title>
-        <link rel="stylesheet" href="Homepage.css"
-    </head>
-</html>
-
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SG Parking Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
 <body>
-    <div class="container">
-        <div class="left-content">
-            <h1>Carpark Tracking and Information</h1>
-            <p>A site featuring all HDB and Malls Parking Information</p>
-            <header>
-                <nav>
-                    <ul>
-                        <li><a href="CarparkAvailability.html">HDB Carpark Availabilities</a></li>
-                        <li><a href="CarparkMallPrices.html">Mall Carpark Pricings</a></li>
-                    </ul>
-                </nav>
-            </header>
 
-            <main>
-                <h2>Other Services</h2>
-            </main>
+    <header class="app-header">
+        <div class="header-container">
+            <h1>🚗 SG Parking Hub</h1>
+            <p>Real-time HDB availability & Mall pricing directory</p>
+        </div>
+    </header>
 
-            <footer>
-                <p>&copy; To the respective owners and data.gov.sg for the APIs</p>
-                <a href ="https://data.gov.sg/datasets?topics=housing|transport&resultId=d_ca933a644e55d34fe21f28b8052fac63">Carpark Availability</a>
-                <a href ="https://data.gov.sg/datasets/d_23f946fa557947f93a8043bbef41dd09/view">Carpark Information </a>
-            </footer>
+    <main class="container">
+        <div class="tabs">
+            <button class="tab-btn active" data-target="hdb-section">HDB Availability</button>
+            <button class="tab-btn" data-target="mall-section">Mall Rates</button>
         </div>
 
-        <div class="right-sidebar">
-            <h1>Hi</h1>
-            <p>*ALFRED PLEASE ADD IN SOMETHING HERE PLEASEEEEEEEEEEEEEEE.</p>
-        </div>
-    </div>
+        <section class="search-container">
+            <input type="text" id="searchInput" placeholder="Search by name, carpark number, or address..." aria-label="Search">
+            <button class="btn-clear" id="clearBtn">Clear</button>
+        </section>
+
+        <div id="loadingMessage" class="status-message info">Loading data, please wait...</div>
+        <div id="errorMessage" class="status-message error hidden"></div>
+        <div id="noResults" class="status-message warning hidden">No results found matching your search.</div>
+
+        <section id="hdb-section" class="tab-content active">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Carpark No.</th>
+                            <th>Address</th>
+                            <th>Total Lots</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hdbTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="mall-section" class="tab-content">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mall Name</th>
+                            <th>Total Lots</th>
+                            <th>Weekday (Before 5PM)</th>
+                            <th>Weekday (After 5PM)</th>
+                            <th>Weekends & PH</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mallTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/app.js"></script>
 </body>
+</html>
